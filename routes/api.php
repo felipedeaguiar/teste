@@ -23,6 +23,7 @@ Route::post('/sales', [\App\Http\Controllers\SaleController::class, 'store']);
 Route::get('/sales/{uuid}', [\App\Http\Controllers\SaleController::class, 'show']);
 Route::get('/sales', [\App\Http\Controllers\SaleController::class, 'index']);
 Route::delete('/sales/{uuid}', [\App\Http\Controllers\SaleController::class, 'cancel']);
+Route::put('/sales/{uuid}/add-product', [\App\Http\Controllers\SaleController::class, 'addProduct']);
 
 Route::get('/products', [\App\Http\Controllers\ProductController::class, 'index']);
 

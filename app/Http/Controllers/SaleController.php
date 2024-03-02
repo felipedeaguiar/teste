@@ -69,7 +69,7 @@ class SaleController extends Controller
     public function show(string $uuid): JsonResponse
     {
         try {
-            $sale = Sale::where('uuid', $uuid)->firstOrFail();
+            $sale = $this->saleService->getByUuid($uuid);
             return $this->toSuccess(new SaleResource($sale->load('products')));
         } catch (ModelNotFoundException $e) {
             return $this->toError('Unknow sale', 404);
@@ -77,7 +77,11 @@ class SaleController extends Controller
     }
 
 
-    public function cancel(string $uuid)
+    /**
+     * @param string $uuid
+     * @return array|JsonResponse
+     */
+    public function cancel(string $uuid): JsonResponse
     {
         try {
             $this->saleService->cancel($uuid);
@@ -86,5 +90,11 @@ class SaleController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->toError('Unknow sale', 404);
         }
+    }
+
+    public function addProduct(string $uuid, Request $request)
+    {
+        $this->saleService->getByUuid($uuid);
+        $this->saleService->addProduct();
     }
 }
