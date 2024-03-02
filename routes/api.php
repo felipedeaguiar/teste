@@ -22,4 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/sales', [\App\Http\Controllers\SaleController::class, 'store']);
 Route::get('/sales/{uuid}', [\App\Http\Controllers\SaleController::class, 'show']);
 Route::get('/sales', [\App\Http\Controllers\SaleController::class, 'index']);
+Route::delete('/sales/{uuid}', [\App\Http\Controllers\SaleController::class, 'cancel']);
+
 Route::get('/products', [\App\Http\Controllers\ProductController::class, 'index']);
+

@@ -76,4 +76,15 @@ class SaleController extends Controller
         }
     }
 
+
+    public function cancel(string $uuid)
+    {
+        try {
+            $this->saleService->cancel($uuid);
+            return $this->toSuccess();
+
+        } catch (ModelNotFoundException $e) {
+            return $this->toError('Unknow sale', 404);
+        }
+    }
 }

@@ -80,4 +80,15 @@ class SaleService
 
         return $sales;
     }
+
+    /**
+     * @param string $uuid
+     * @return bool
+     */
+    public function cancel(string $uuid): bool
+    {
+        $sale = Sale::where('uuid', $uuid)->firstOrFail();
+
+        return $sale->delete();
+    }
 }
