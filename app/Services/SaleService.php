@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Product;
+use App\Models\Sale;
+
+/**
+ *
+ */
+class SaleService
+{
+
+    /**
+     * @param array $products
+     * @return Sale
+     * @throws \Exception
+     */
+    public function create(array $products): Sale
+    {
+        $validator = \Validator::make(['products' => $products], [
+            'products' => 'required|array|min:1', // Verifica se é um array e tem pelo menos 1 elemento
+            'products.*.id' => 'required|exists:products,id',
+            'products.*.amount' => 'required|numeric|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first());
+        }
+
+        // Inicia a transação
+        \DB::beginTransaction();
+
+        try {
+
+            $sale = new Sale();
+            $sale->save();
+
+            foreach ($products as $productData) {
+                $product = Product::findOrFail($productData['id']);
+                $amount = $productData['amount'];
+
+                $sale->products()->attach($product, ['amount' => $amount]);
+
+                // Atualiza o valor total da venda
+                $sale->amount += $product->price * $amount;
+            }
+
+            // Finaliza a transação
+            \DB::commit();
+
+        } catch (\Exception $e) {
+            // Em caso de erro, reverte a transação
+            \DB::rollBack();
+
+            throw $e;
+        }
+
+        return $sale;
+    }
+
+    public function getAll($filters = [])
+    {
+
+    }
+}
