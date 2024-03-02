@@ -35,11 +35,7 @@ class SaleController extends Controller
     {
         $result = $this->saleService->getAll($request->query());
 
-        if (!empty($result)) {
-            return $this->toSuccess(SaleResource::collection($result), 200, true);
-        }
-
-        return $this->toSuccess([],201);
+        return $this->toSuccess(SaleResource::collection($result), 200, true);
     }
 
     /**
@@ -84,7 +80,7 @@ class SaleController extends Controller
     {
         try {
             $this->saleService->cancel($uuid);
-            return $this->toSuccess();
+            return $this->toSuccess([]);
 
         } catch (ModelNotFoundException $e) {
             return $this->toError('Unknow sale', 404);
@@ -100,6 +96,7 @@ class SaleController extends Controller
             $this->saleService->addProductsToSale($sale, $products);
 
             return $this->toSuccess(new SaleResource($sale));
+
         } catch (ModelNotFoundException $e) {
             return $this->toError('Unknow sale', 404);
         }
