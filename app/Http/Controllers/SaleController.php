@@ -27,6 +27,22 @@ class SaleController extends Controller
         $this->saleService = $saleService;
     }
 
+
+    /**
+     * @param Request $request
+     * @return array|JsonResponse
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $result = $this->saleService->getAll($request->query());
+
+        if (!empty($result)) {
+            return $this->toSuccess(SaleResource::collection($result), 200, true);
+        }
+
+        return $this->toSuccess([],201);
+    }
+
     /**
      * @param Request $request
      * @return array|\Illuminate\Http\JsonResponse
@@ -60,8 +76,4 @@ class SaleController extends Controller
         }
     }
 
-    public function getAll(Request $request)
-    {
-
-    }
 }

@@ -59,8 +59,25 @@ class SaleService
         return $sale;
     }
 
+    /**
+     * @param $filters
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getAll($filters = [])
     {
+        $pageSize = 10;
+        $query = Sale::query();
 
+        if (array_key_exists('pageSize', $filters)) {
+            $pageSize = $filters['pageSize'];
+        }
+
+        if (array_key_exists('withProducts', $filters)) {
+            $query->with('products');
+        }
+
+        $sales = $query->paginate($pageSize);
+
+        return $sales;
     }
 }
