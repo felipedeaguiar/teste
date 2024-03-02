@@ -65,9 +65,15 @@ class SaleService
      * @param string $uuid
      * @return Sale
      */
-    public function getByUuid(string $uuid): Sale
+    public function getByUuid(string $uuid, $withRelations = false): Sale
     {
-        $sale = Sale::where('uuid', $uuid)->firstOrFail();
+        $query = Sale::where('uuid', $uuid);
+
+        if ($withRelations) {
+            $query->with('products');
+        }
+
+        $sale = $query->firstOrFail();
 
         return $sale;
     }
@@ -103,6 +109,9 @@ class SaleService
         }
     }
 
+    /**
+     * @return Sale
+     */
     private function createSale():Sale
     {
         $sale = new Sale();
@@ -111,6 +120,12 @@ class SaleService
         return $sale;
     }
 
+    /**
+     * @param Sale $sale
+     * @param array $products
+     * @return void
+     * @throws \Exception
+     */
     public function addProductsToSale(Sale $sale, array $products)
     {
         $this->validateProducts($products);
@@ -129,6 +144,10 @@ class SaleService
         $this->updateSaleAmount($sale);
     }
 
+    /**
+     * @param Sale $sale
+     * @return void
+     */
     public function updateSaleAmount(Sale $sale): void
     {
         $sale->amount = $this->getTotalPrice($sale);

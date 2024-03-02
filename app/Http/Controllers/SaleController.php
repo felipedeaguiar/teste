@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SaleResource;
-use App\Models\Sale;
 use App\Services\SaleService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -69,8 +68,8 @@ class SaleController extends Controller
     public function show(string $uuid): JsonResponse
     {
         try {
-            $sale = $this->saleService->getByUuid($uuid);
-            return $this->toSuccess(new SaleResource($sale->load('products')));
+            $sale = $this->saleService->getByUuid($uuid, true);
+            return $this->toSuccess(new SaleResource($sale));
         } catch (ModelNotFoundException $e) {
             return $this->toError('Unknow sale', 404);
         }
@@ -94,7 +93,15 @@ class SaleController extends Controller
 
     public function addProduct(string $uuid, Request $request)
     {
-        $this->saleService->getByUuid($uuid);
-        $this->saleService->addProduct();
+        $products = $request->input('products', []);
+
+        try {
+            $sale = $this->saleService->getByUuid($uuid);
+            $this->saleService->addProductsToSale($sale, $products);
+
+            return $this->toSuccess(new SaleResource($sale));
+        } catch (ModelNotFoundException $e) {
+            return $this->toError('Unknow sale', 404);
+        }
     }
 }

@@ -10,6 +10,10 @@ use App\Models\Product;
  */
 class ProductService
 {
+    /**
+     * @param $filters
+     * @return mixed
+     */
     public function getAll($filters = [])
     {
         $pageSize = 10;
